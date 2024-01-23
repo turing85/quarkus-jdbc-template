@@ -1,0 +1,5 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+    devservices:
+      init-script-path: init.sql

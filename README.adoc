@@ -1,0 +1,70 @@
+= quarkus-jdbc-template
+
+This project is a reproducer for a problem with `JdbcTemplate` s  in native mode.
+
+== Build & Test (JVM)
+Run `./mvnw clean verify`, observe that the integration tests succeed.
+
+== Build & Test (native)
+Run `./mvnw -Dnative clean verify`, observe that the integration tests fail. We can find the following stack trace in the application log:
+
+.Stack Trace
+[source]
+----
+...
+2024-01-23 22:18:22,146 ERROR [io.qua.ver.htt.run.QuarkusErrorHandler] (executor-thread-1) HTTP Request to /foo failed, error id: 06c0ccc2-ed4f-4822-b478-e00e33ba3a61-1: java.util.MissingResourceException: Can't find bundle for base name com.sun.rowset.RowSetResourceBundle, locale en_US
+	at java.base@21/java.util.ResourceBundle.throwMissingResourceException(ResourceBundle.java:2059)
+	at java.base@21/java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1697)
+	at java.base@21/java.util.ResourceBundle.getBundleFromModule(ResourceBundle.java:1617)
+	at java.base@21/java.util.ResourceBundle.getBundle(ResourceBundle.java:1017)
+	at java.sql.rowset@21/com.sun.rowset.JdbcRowSetResourceBundle.<init>(JdbcRowSetResourceBundle.java:105)
+	at java.sql.rowset@21/com.sun.rowset.JdbcRowSetResourceBundle.getJdbcRowSetResourceBundle(JdbcRowSetResourceBundle.java:124)
+	at java.sql.rowset@21/com.sun.rowset.CachedRowSetImpl.<init>(CachedRowSetImpl.java:364)
+	at java.sql.rowset@21/com.sun.rowset.RowSetFactoryImpl.createCachedRowSet(RowSetFactoryImpl.java:49)
+	at org.springframework.jdbc.core.SqlRowSetResultSetExtractor.newCachedRowSet(SqlRowSetResultSetExtractor.java:90)
+	at org.springframework.jdbc.core.SqlRowSetResultSetExtractor.createSqlRowSet(SqlRowSetResultSetExtractor.java:74)
+	at org.springframework.jdbc.core.SqlRowSetResultSetExtractor.extractData(SqlRowSetResultSetExtractor.java:58)
+	at org.springframework.jdbc.core.SqlRowSetResultSetExtractor.extractData(SqlRowSetResultSetExtractor.java:42)
+	at org.springframework.jdbc.core.JdbcTemplate$1QueryStatementCallback.doInStatement(JdbcTemplate.java:454)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:383)
+	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:466)
+	at org.springframework.jdbc.core.JdbcTemplate.queryForRowSet(JdbcTemplate.java:531)
+	at de.turing85.quarkus.jdbc.template.Resource.get(Resource.java:28)
+	at de.turing85.quarkus.jdbc.template.Resource$quarkusrestinvoker$get_bd3a803a64f67f513762962949efcedfd340aa43.invoke(Unknown Source)
+	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:141)
+	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+	at io.quarkus.vertx.core.runtime.VertxCoreRecorder$14.runWith(VertxCoreRecorder.java:582)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2513)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
+	at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:29)
+	at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:29)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base@21/java.lang.Thread.runWith(Thread.java:1596)
+	at java.base@21/java.lang.Thread.run(Thread.java:1583)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.thread.PlatformThreads.threadStartRoutine(PlatformThreads.java:833)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.posix.thread.PosixPlatformThreads.pthreadStartRoutine(PosixPlatformThreads.java:211)
+...
+----
+
+== Contributors ✨
+
+Thanks goes to these wonderful people (https://allcontributors.org/docs/en/emoji-key[emoji key]):
+
+++++
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://turing85.github.io"><img src="https://avatars.githubusercontent.com/u/32584495?v=4?s=100" width="100px;" alt="Marco Bungart"/><br /><sub><b>Marco Bungart</b></sub></a><br /><a href="#code-turing85" title="Code">💻</a> <a href="#maintenance-turing85" title="Maintenance">🚧</a> <a href="#doc-turing85" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+++++
